@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -94,13 +93,25 @@
                             </div>
                         </div>
                         
-                        <div>
-                            <label class="block text-sm font-medium text-slate-600 mb-1" title="Lo que cuesta volver a pintar una pieza (material extra + tu tiempo perdido)">
-                                Costo Promedio por Retrabajo (C/U) <i class="fas fa-info-circle text-slate-400"></i>
-                            </label>
-                            <div class="input-group">
-                                <i class="fas fa-tools input-icon text-red-400"></i>
-                                <input type="number" id="costoRetrabajo" value="600" class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-red-500 text-sm">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-600 mb-1" title="Lo que cuesta volver a pintar una pieza (material extra + tu tiempo perdido)">
+                                    Costo por Retrabajo <i class="fas fa-info-circle text-slate-400"></i>
+                                </label>
+                                <div class="input-group">
+                                    <i class="fas fa-tools input-icon text-red-400"></i>
+                                    <input type="number" id="costoRetrabajo" value="600" class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-red-500 text-sm">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-600 mb-1" title="Probabilidad de cometer error tipo I">
+                                    Nivel de Significancia (α) <i class="fas fa-info-circle text-slate-400"></i>
+                                </label>
+                                <select id="alfaInput" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm cursor-pointer">
+                                    <option value="0.10">0.10 (10% - Flexible)</option>
+                                    <option value="0.05" selected>0.05 (5% - Estándar)</option>
+                                    <option value="0.01">0.01 (1% - Estricto)</option>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -166,10 +177,58 @@
                 
                 <!-- Veredicto del Test -->
                 <div id="verdictoPanel" class="bg-indigo-600 text-white p-6 rounded-2xl shadow-md transition-all duration-300">
-                    <h3 class="text-sm font-bold uppercase tracking-widest text-indigo-200 mb-2">Conclusión Estadística</h3>
+                    <h3 class="text-sm font-bold uppercase tracking-widest text-indigo-200 mb-2">Conclusión Práctica</h3>
                     <p id="verdictoTexto" class="text-xl font-medium leading-tight">
                         Calculando resultados...
                     </p>
+                </div>
+
+                <!-- Motor de Inferencia Estadística -->
+                <div class="bg-slate-900 text-slate-300 p-6 rounded-2xl shadow-inner border border-slate-700 relative overflow-hidden">
+                    <div class="absolute -right-4 -top-4 opacity-10"><i class="fas fa-chart-area text-9xl"></i></div>
+                    <h3 class="text-sm font-bold uppercase tracking-widest text-indigo-400 mb-4 flex items-center gap-2">
+                        <i class="fas fa-calculator"></i> Análisis Estadístico Formal (Z-Test)
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 text-sm relative z-10">
+                        <div class="space-y-3">
+                            <div>
+                                <span class="block text-slate-500 text-xs uppercase mb-1">Hipótesis de Rentabilidad (Media x Pieza)</span>
+                                <div class="font-mono bg-slate-800 p-3 rounded-lg text-indigo-300 border border-slate-700 shadow-inner">
+                                    H₀: μ_eco ≥ μ_alt <span class="text-slate-500 text-xs">(Lo barato es mejor/igual)</span><br>
+                                    H₁: μ_alt > μ_eco <span class="text-slate-500 text-xs">(Invertir más es mejor)</span>
+                                </div>
+                            </div>
+                            <div class="flex justify-between items-center border-b border-slate-800 pb-2 pt-2">
+                                <span class="text-slate-400">Alfa (α):</span>
+                                <span id="displayAlfa" class="font-mono font-bold text-white bg-slate-800 px-2 py-1 rounded">0.05</span>
+                            </div>
+                            <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                                <span class="text-slate-400">Desv. Estándar Económico (σ):</span>
+                                <span id="displayStdEco" class="font-mono text-white">$0.00</span>
+                            </div>
+                            <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                                <span class="text-slate-400">Desv. Estándar Alt (σ):</span>
+                                <span id="displayStdAlt" class="font-mono text-white">$0.00</span>
+                            </div>
+                        </div>
+                        <div class="space-y-3 flex flex-col justify-center">
+                            <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                                <span class="text-slate-400">Estadístico de Prueba (Z):</span>
+                                <span id="displayZ" class="font-mono font-bold text-blue-400 text-lg">0.00</span>
+                            </div>
+                            <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                                <span class="text-slate-400">Valor p (P-value):</span>
+                                <span id="displayP" class="font-mono font-bold text-pink-400 text-lg">0.0000</span>
+                            </div>
+                            <div class="mt-4 p-3 rounded-lg bg-slate-800 border border-slate-700 shadow-inner">
+                                <span class="block text-slate-400 text-xs uppercase mb-2">Comparación Lógica</span>
+                                <div id="displayLogica" class="font-mono text-white text-sm">
+                                    Calculando...
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Tarjetas de Resultados -->
@@ -261,9 +320,19 @@
                 precioVenta: document.getElementById('precioVenta'),
                 costosFijos: document.getElementById('costosFijos'),
                 costoRetrabajo: document.getElementById('costoRetrabajo'),
+                alfa: document.getElementById('alfaInput'),
                 eco: { costo: document.getElementById('costoEco'), falla: document.getElementById('fallaEco') },
                 std: { costo: document.getElementById('costoStd'), falla: document.getElementById('fallaStd') },
                 prem: { costo: document.getElementById('costoPrem'), falla: document.getElementById('fallaPrem') }
+            };
+
+            const statsOutputs = {
+                alfa: document.getElementById('displayAlfa'),
+                stdEco: document.getElementById('displayStdEco'),
+                stdAlt: document.getElementById('displayStdAlt'),
+                z: document.getElementById('displayZ'),
+                p: document.getElementById('displayP'),
+                logica: document.getElementById('displayLogica')
             };
 
             const outputs = {
@@ -281,7 +350,7 @@
 
             // Listeners
             Object.values(inputs).forEach(item => {
-                if(item.tagName === 'INPUT') {
+                if(item.tagName === 'INPUT' || item.tagName === 'SELECT') {
                     item.addEventListener('input', runSimulation);
                 } else if (typeof item === 'object' && item.costo) {
                     item.costo.addEventListener('input', runSimulation);
@@ -293,6 +362,15 @@
                 inputs.volumenDisplay.textContent = `${e.target.value} piezas`;
             });
 
+            // Función CDF Normal Estándar para obtener P-value
+            function normalCDF(x) {
+                const t = 1 / (1 + 0.2316419 * Math.abs(x));
+                const d = 0.3989423 * Math.exp(-x * x / 2);
+                let prob = d * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274))));
+                if (x > 0) prob = 1 - prob;
+                return prob;
+            }
+
             // Función Principal de Simulación (Cálculo de Valor Esperado)
             function runSimulation() {
                 const getVal = (el) => parseFloat(el.value) || 0;
@@ -301,6 +379,7 @@
                 const precio = getVal(inputs.precioVenta);
                 const fijos = getVal(inputs.costosFijos);
                 const costoRetrabajo = getVal(inputs.costoRetrabajo);
+                const alfa = getVal(inputs.alfa);
 
                 const ingresos = vol * precio;
 
@@ -315,13 +394,21 @@
                     const costoMermasTotal = defectosEsperados * costoRetrabajo;
                     
                     const costoTotal = fijos + costoMaterialTotal + costoMermasTotal;
-                    const utilidad = ingresos - costoTotal;
+                    const utilidadTotal = ingresos - costoTotal;
+
+                    // Para el test estadístico (Rentabilidad por pieza)
+                    const gananciaMediaPieza = utilidadTotal / vol;
+                    
+                    // Varianza generada por los defectos: V(X) = p * (1 - p) * (CostoRetrabajo)^2
+                    const varianzaPieza = probFalla * (1 - probFalla) * Math.pow(costoRetrabajo, 2);
 
                     return {
                         defectos: defectosEsperados,
                         costoMat: costoMaterialTotal,
                         costoMerma: costoMermasTotal,
-                        utilidad: utilidad
+                        utilidad: utilidadTotal,
+                        media: gananciaMediaPieza,
+                        varianza: varianzaPieza
                     };
                 };
 
@@ -341,8 +428,50 @@
                 updateCard('std', resStd);
                 updateCard('prem', resPrem);
 
-                // --- EVALUACIÓN DE HIPÓTESIS ---
-                let maxUtil = Math.max(resEco.utilidad, resStd.utilidad, resPrem.utilidad);
+                // --- MOTOR DE INFERENCIA ESTADÍSTICA (Z-Test de Medias Independientes) ---
+                
+                // Elegimos la mejor alternativa (la que de mayor utilidad) para enfrentar a la Económica (H0)
+                const alt = resStd.utilidad > resPrem.utilidad ? resStd : resPrem;
+                const nombreAlt = resStd.utilidad > resPrem.utilidad ? "Estándar" : "Premium";
+
+                // Varianza de la diferencia de medias: Var(D) = Var(Eco)/N + Var(Alt)/N
+                const varDiferencia = (resEco.varianza / vol) + (alt.varianza / vol);
+                const errorEstandar = Math.sqrt(varDiferencia);
+                
+                // Z = (Media Alt - Media Eco) / Error Estándar
+                const difMedias = alt.media - resEco.media;
+                // Si el error estándar es 0 (ej. prob falla = 0), asginamos un Z extremo para no dividir entre 0
+                let zScore = errorEstandar > 0 ? (difMedias / errorEstandar) : (difMedias > 0 ? 99.99 : -99.99);
+                
+                // Test de cola derecha (Queremos demostrar que H1 (Alt) > H0 (Eco))
+                let pValue = 1 - normalCDF(zScore);
+
+                // --- ACTUALIZAR PANEL ESTADÍSTICO ---
+                statsOutputs.alfa.textContent = alfa.toFixed(2);
+                statsOutputs.stdEco.textContent = formatMoney(Math.sqrt(resEco.varianza));
+                statsOutputs.stdAlt.textContent = formatMoney(Math.sqrt(alt.varianza)) + ` (${nombreAlt})`;
+                statsOutputs.z.textContent = zScore.toFixed(4);
+                
+                // Formatear P-value, si es muy pequeño mostrar < 0.0001
+                statsOutputs.p.textContent = pValue < 0.0001 ? "< 0.0001" : pValue.toFixed(4);
+
+                let rechazarH0 = false;
+                let logicaText = "";
+
+                if (vol === 0) {
+                     logicaText = "Esperando volumen...";
+                } else if (pValue < alfa) {
+                     rechazarH0 = true;
+                     logicaText = `P-value (${pValue < 0.0001 ? '<0.0001' : pValue.toFixed(4)}) < α (${alfa})\n¡Evidencia fuerte!\nRechazamos H₀.`;
+                     statsOutputs.logica.className = "font-mono text-green-400 font-bold whitespace-pre-line";
+                } else {
+                     logicaText = `P-value (${pValue.toFixed(4)}) ≥ α (${alfa})\nEvidencia insuficiente.\nNo se rechaza H₀.`;
+                     statsOutputs.logica.className = "font-mono text-yellow-400 whitespace-pre-line";
+                }
+                statsOutputs.logica.textContent = logicaText;
+
+
+                // --- EVALUACIÓN PRÁCTICA (UI) ---
                 let verdictoHtml = "";
                 let bgClass = "";
 
@@ -350,17 +479,14 @@
                      verdictoHtml = "Ingresa un volumen de piezas mayor a cero para simular.";
                      bgClass = "bg-slate-600";
                 }
-                else if (maxUtil === resEco.utilidad) {
-                    // Gana H0
-                    verdictoHtml = `✅ <strong>No se rechaza H₀:</strong> El patrón tiene razón. Con estos datos, la opción <strong>Económica</strong> genera mayor utilidad (${formatMoney(resEco.utilidad)}). El costo del retrabajo es tan bajo que conviene asumir las fallas y ahorrar en material.`;
+                else if (!rechazarH0) {
+                    // Gana H0 estadísticamente
+                    verdictoHtml = `✅ <strong>No se rechaza H₀ (El patrón tiene razón):</strong> Estadísticamente, la diferencia NO es significativa. El riesgo de falla con la pintura económica no genera pérdidas suficientes para justificar la compra de un material más caro.`;
                     bgClass = "bg-slate-600";
                 } 
                 else {
-                    // Gana H1 (Std o Prem)
-                    const ganador = resStd.utilidad === maxUtil ? "Estándar" : "Premium";
-                    const dif = maxUtil - resEco.utilidad;
-                    
-                    verdictoHtml = `🎉 <strong>Se RECHAZA H₀ (Se Acepta H₁):</strong> ¡Tú tienes la razón! Usar material <strong>${ganador}</strong> es más rentable. Aunque gastas más al comprar, te ahorras los dolores de cabeza de los defectos, generando <strong>${formatMoney(dif)} extra</strong> de ganancia al mes.`;
+                    // Gana H1
+                    verdictoHtml = `🎉 <strong>Se RECHAZA H₀ (El pintor tiene razón):</strong> Existe evidencia estadística fuerte (P < α) de que usar material <strong>${nombreAlt}</strong> es significativamente más rentable a largo plazo, absorbiendo su propio sobrecosto.`;
                     bgClass = "bg-indigo-600";
                 }
 
